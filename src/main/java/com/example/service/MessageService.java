@@ -1,6 +1,8 @@
 package com.example.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.example.entity.Message;
@@ -53,18 +55,19 @@ public class MessageService {
         return false;
     }
 
-    public int updateMessage(int messageId, String messageText) {
-        if (messageText == null || messageText.isEmpty() || messageText.length() > 255) {
-            throw new IllegalArgumentException("Invalid message");
-        }
+    public ResponseEntity<Object> updateMessage(int messageId, String messageText) {
 
-        Optional<Message> existingMessage = messageRepository.findById(messageId);
-        if(existingMessage.isPresent()) {
+        // if (messageText == null && messageText.isBlank() && messageText.length() > 255) {
+        //     throw new IllegalArgumentException("Invalid message");
+        // }
+
+        Optional<Message> existingMessage = messageRepository.findByMessageId(messageId);
+        if(existingMessage.isPresent() && messageText != null && !messageText.isBlank() && messageText.length() <= 255) {
             existingMessage.get().setMessageText(messageText);
             messageRepository.save(existingMessage.get());
-            return 1;
+            return ResponseEntity.ok("1");
         } else {
-            throw new IllegalArgumentException("Message doesn't exist");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
 

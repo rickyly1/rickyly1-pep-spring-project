@@ -7,6 +7,7 @@ import javax.naming.AuthenticationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.*;
 
@@ -86,13 +87,13 @@ public class SocialMediaController {
 
     // 7 - update a message text, use IllegalArgumentException for 400 (implemented above)
     @PatchMapping("/messages/{messageId}")
-    public int updateMessage(@PathVariable int messageId, @RequestBody String messageText) {
-        try {
-            int rowsUpdated = messageService.updateMessage(messageId, messageText);
-            return rowsUpdated;
-        } catch (IllegalArgumentException e) {
-            throw e; 
-        }
+    public @ResponseBody ResponseEntity<Object> updateMessage(@PathVariable int messageId, @RequestBody Message messageText) {
+        //try {
+            return messageService.updateMessage(messageId, messageText.getMessageText());
+            //return rowsUpdated;
+        // } catch (IllegalArgumentException e) {
+        //     throw e; 
+        // }
     }
 
     // 8 - retrieve all messages from a user
